@@ -2,6 +2,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const mongoose = require('mongoose');
+mongoose.pluralize(null);
 const Schema = mongoose.Schema;
 
 const userConnection = mongoose.createConnection(
