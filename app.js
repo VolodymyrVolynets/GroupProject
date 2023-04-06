@@ -71,6 +71,6 @@ io.on('connection', (client) => {
 	});
 });
 
-server.listen(3000);
+server.listen(process.env.PORT || 3000);
 
 // write mysql query to get all users with email ivanZhukov@gmail.com
