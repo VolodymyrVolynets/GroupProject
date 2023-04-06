@@ -1,7 +1,7 @@
 const { usersModel } = require('./database');
 
 exports.isUserExist = async (username) => {
-    try {
+	try {
 		const result = await usersModel.findOne({ username: username });
 		if (result.length === 0) {
 			return false;
@@ -14,18 +14,17 @@ exports.isUserExist = async (username) => {
 };
 
 exports.authenticateUser = async (username, password) => {
-    try {
-        // console.log(database)
-        const result = await usersModel.findOne({
+	try {
+		const result = await usersModel.findOne({
 			username: username,
 			password: password,
 		});
-        if (result.length === 0) {
-            return false;
-        }
-        return true;
-    } catch (err) {
-        console.log(err);
-        return false;
-    }
-}
+		// console.log(result);
+		if (result == null) {
+			return false;
+		}
+		return true;
+	} catch (err) {
+		console.log(err);
+	}
+};

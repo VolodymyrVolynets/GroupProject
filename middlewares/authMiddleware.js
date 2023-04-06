@@ -7,7 +7,7 @@ exports.authenticateUser = async (client, next) => {
 	client.username = username;
 
 	if (!(await usersController.authenticateUser(username, password))) {
-		return client.disconnect();
+		return client.disconnect(true);
 	}
 
 	client.join(client.username);
