@@ -10,6 +10,8 @@ io.use(require('./middlewares/authMiddleware').authenticateUser);
 
 
 io.on('connection', (client) => {
+	// notify client that connected
+	client.emit('connected', { message: 'You are connected!' });
 	
 	// client.on('new_data', async (data) => {
 	// 	try {
@@ -66,7 +68,6 @@ io.on('connection', (client) => {
 	});
 
 	client.on('disconnect', () => {
-		console.log("disconnecting")
 		client.disconnect();
 	});
 });
