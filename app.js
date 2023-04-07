@@ -11,41 +11,45 @@ io.use(require('./middlewares/authMiddleware').authenticateUser);
 
 io.on('connection', (client) => {
 	// notify client that connected
-	client.emit('connected', { message: 'You are connected!' });
-	
-	// client.on('new_data', async (data) => {
-	// 	try {
-	// 		console.log(data)
-	// 		const sensorData = new SensorDataModel(data);
-	// 		//echo to other clients
-	// 		client.to(client.username).emit('new_data', sensorData);
-	// 		// const result = await sensorsController.addNewSensorsData(client.username, sensorData);
-	// 	} catch (err) {
-	// 		console.log(err);
-	// 	}
-	// });
+	if (!client.isCorrectLiginDetails) {
+		client.disconnect();
+		return;
+	}
+		// client.on('new_data', async (data) => {
+		// 	try {
+		// 		console.log(data)
+		// 		const sensorData = new SensorDataModel(data);
+		// 		//echo to other clients
+		// 		client.to(client.username).emit('new_data', sensorData);
+		// 		// const result = await sensorsController.addNewSensorsData(client.username, sensorData);
+		// 	} catch (err) {
+		// 		console.log(err);
+		// 	}
+		// });
 
-	// Python clients send sensors values to the server and the server sends them to the other clients and saves them in the database every 5 minute
-	client.on('sensors_value', (data) => {
-		try {
-			// validate data
-			let sensorsArray = [];
-			for (let i = 0; i < data.length; i++) {
-				sensorsArray.push(new SensorDataModel(data[i]));
+		// Python clients send sensors values to the server and the server sends them to the other clients and saves them in the database every 5 minute
+		client.on('sensors_value', (data) => {
+			try {
+				// validate data
+				let sensorsArray = [];
+				for (let i = 0; i < data.length; i++) {
+					sensorsArray.push(new SensorDataModel(data[i]));
+				}
+
+				// echo to other clients
+				client.to(client.username).emit('sensors_value', sensorsArray);
+
+				// save data in the database
+				for (let i = 0; i < sensorsArray.length; i++) {
+					sensorsController.addNewSensorsValueIfMoreThan5Minutes(
+						client.username,
+						sensorsArray[i]
+					);
+				}
+			} catch (err) {
+				console.log(err);
 			}
-
-			// echo to other clients
-			client.to(client.username).emit('sensors_value', sensorsArray);
-
-			// save data in the database
-			for(let i = 0; i < sensorsArray.length; i++) {
-				sensorsController.addNewSensorsValueIfMoreThan5Minutes(client.username, sensorsArray[i]);
-			}
-
-		} catch (err) {
-			console.log(err);
-		}
-	});
+		});
 
 	// Python clients send actuators values to the server and the server sends them to the other clients
 	client.on('actuators_value', (data) => {
