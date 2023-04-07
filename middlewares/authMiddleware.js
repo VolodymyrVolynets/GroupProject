@@ -8,8 +8,8 @@ exports.authenticateUser = async (client, next) => {
 
 	if (!(await usersController.authenticateUser(username, password))) {
 		console.log('Authentication failed');
-		client.emit('disconnect', { message: 'Authentication failed' });
-		return client.disconnect(true);
+		// client.emit('disconnect', { message: 'Authentication failed' });
+		return client.disconnect();
 	}
 
 	client.join(client.username);
