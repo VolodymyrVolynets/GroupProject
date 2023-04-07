@@ -32,3 +32,14 @@ exports.addNewSensorsValueIfMoreThan5Minutes = async (username, sensorDataModel)
         return false;
     }
 }
+
+exports.getDataForSensor = async (username, sensorName) => {
+    try {
+        const model = await sensorsModel(username);
+        const data = await model.find({ name: sensorName })
+        return data;
+    } catch (err) {
+        console.log(err);
+        return;
+    }
+}
