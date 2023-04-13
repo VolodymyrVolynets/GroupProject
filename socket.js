@@ -61,6 +61,7 @@ io.on('connection', (client, next) => {
 	client.on('new_actuator_value', (data) => {
 		try {
 			// validate data
+			console.log(data)
 			let actuator = new SensorDataModel(data);
 
 			if (actuator.name === undefined || actuator.value === undefined || actuator.type === undefined) {
