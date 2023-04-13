@@ -2,6 +2,7 @@ const { http } = require('./express');
 const io = require('socket.io')(http);
 const sensorsController = require('./controllers/database/sensorsController');
 const SensorDataModel = require('./Models/SensorDataModel');
+const ActuatorDataModel = require('./Models/ActuatorDataModel');
 
 io.use(require('./middlewares/authMiddleware').authenticateUser);
 
@@ -43,6 +44,12 @@ io.on('connection', (client, next) => {
 	// Python clients send actuators values to the server and the server sends them to the other clients
 	client.on('actuators_value', (data) => {
 		try {
+			// validate data
+			let actuatorsArray = [];
+			for (let i = 0; i < data.length; i++) {
+				actuatorsArray.push(new SensorDataModel(data[i]));
+			}
+
 			// echo to other clients
 			client.to(client.username).emit('actuators_value', data);
 		} catch (err) {
@@ -51,10 +58,18 @@ io.on('connection', (client, next) => {
 	});
 
 	// Swift clients send actuators values to the server and the server sends them to the other clients
-	client.on('new_actuators_value', (data) => {
+	client.on('new_actuator_value', (data) => {
 		try {
+			// validate data
+			let actuator = new SensorDataModel(data);
+
+			if (actuator.name === undefined || actuator.value === undefined || actuator.type === undefined) {
+				console.log('Bad request')
+				return
+			}
+			console.log(actuator)
 			// echo to other clients
-			client.to(client.username).emit('new_actuators_value', data);
+			client.to(client.username).emit('new_actuator_value', actuator);
 		} catch (err) {
 			console.log(err);
 		}
