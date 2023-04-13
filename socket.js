@@ -6,9 +6,18 @@ const ActuatorDataModel = require('./Models/ActuatorDataModel');
 
 io.use(require('./middlewares/authMiddleware').authenticateUser);
 
-
 // Authentication middleware called only when a client connects
 io.use(require('./middlewares/authMiddleware').authenticateUser);
+
+// io.use((socket, next) => {
+// 	socket.onAny((eventName, data) => {
+// 		// Modify the data here
+// 		console.log(eventName, data)
+
+// 		// Call the next middleware function or event listener with the modified data
+// 		next(eventName, data);
+// 	});
+// });
 
 io.on('connection', (client, next) => {
 	// Check if the client is authenticated
@@ -21,6 +30,13 @@ io.on('connection', (client, next) => {
 	client.on('sensors_value', (data) => {
 		try {
 			// validate data
+			try {
+				// Try parsing the data as JSON
+				data = JSON.parse(data);
+			} catch (error) {
+				// If parsing fails, assume the data is not JSON and convert
+			}
+
 			let sensorsArray = [];
 			for (let i = 0; i < data.length; i++) {
 				sensorsArray.push(new SensorDataModel(data[i]));
@@ -45,6 +61,13 @@ io.on('connection', (client, next) => {
 	client.on('actuators_value', (data) => {
 		try {
 			// validate data
+			try {
+				// Try parsing the data as JSON
+				data = JSON.parse(data);
+			} catch (error) {
+				// If parsing fails, assume the data is not JSON and convert
+			}
+
 			let actuatorsArray = [];
 			for (let i = 0; i < data.length; i++) {
 				actuatorsArray.push(new SensorDataModel(data[i]));
@@ -61,14 +84,24 @@ io.on('connection', (client, next) => {
 	client.on('new_actuator_value', (data) => {
 		try {
 			// validate data
-			console.log(data)
+			try {
+				// Try parsing the data as JSON
+				data = JSON.parse(data);
+			} catch (error) {
+				// If parsing fails, assume the data is not JSON and convert
+			}
+			
 			let actuator = new SensorDataModel(data);
 
-			if (actuator.name === undefined || actuator.value === undefined || actuator.type === undefined) {
-				console.log('Bad request')
-				return
+			if (
+				actuator.name === undefined ||
+				actuator.value === undefined ||
+				actuator.type === undefined
+			) {
+				console.log('Bad request');
+				return;
 			}
-			console.log(actuator)
+			console.log(actuator);
 			// echo to other clients
 			client.to(client.username).emit('new_actuator_value', actuator);
 		} catch (err) {
@@ -80,7 +113,6 @@ io.on('connection', (client, next) => {
 		client.disconnect();
 	});
 });
-
 
 module.exports = {
 	io,
