@@ -24,6 +24,7 @@ app.use(async (req, res, next) => {
 		return;
 	}
 	req.username = username;
+	// res.status(200);
 	next();
 });
 

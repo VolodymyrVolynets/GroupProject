@@ -24,18 +24,28 @@ const sensorsSchema = new Schema({
 		required: true,
 	},
 	type: {
-		type: String,
-		required: true,
-	},
-	value: {
 		type: Number,
 		required: true,
 	},
-	date: {
-		type: Date,
-		default: Date.now,
-	},
+	values: [
+		{
+			date: {
+				type: Date,
+				required: true,
+			},
+			value: {
+				type: Number,
+				required: true,
+			},
+		},
+	],
 });
+
+//make data expiry after 1 month
+sensorsSchema.index(
+	{ 'values.date': 1 },
+	{ expireAfterSeconds: 60 * 60 * 24 * 30 }
+);
 
 const usersModel = userConnection.model('users', usersSchema);
 const sensorsModel = (username) => {
