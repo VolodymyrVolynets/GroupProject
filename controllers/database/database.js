@@ -29,6 +29,7 @@ const sensorsSchema = new Schema({
 	},
 	values: [
 		{
+			_id: false,
 			date: {
 				type: Date,
 				required: true,
@@ -43,7 +44,7 @@ const sensorsSchema = new Schema({
 
 //make data expiry after 1 month
 sensorsSchema.index(
-	{ 'values.date': 1 },
+	{ 'values.date': 1, 'values.value': 1 },
 	{ expireAfterSeconds: 60 * 60 * 24 * 30 }
 );
 

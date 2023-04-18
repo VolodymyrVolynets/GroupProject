@@ -39,10 +39,7 @@ app.post('/getDataForSensor', async (req, res) => {
 });
 
 app.post('/getAllSensorsLastData', async (req, res) => {
-
-	const data = await sensorsController.getAllSensorsLastData(
-		req.username
-	);
+	const data = await sensorsController.getAllSensorsLastData(req.username);
 
 	res.send(data);
 });
