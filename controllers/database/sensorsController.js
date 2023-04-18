@@ -75,7 +75,7 @@ exports.addNewSensorsValueIfMoreThan5Minutes = async (
 
 	try {
 		const sensor = await model.findOne({ name: sensorDataModel.name });
-		createNewSensorIfNotExist(sensor, sensorDataModel);
+		createNewSensorIfNotExist(model, sensorDataModel);
 		if (await isSensorNeedsUpdate(sensor, 300)) {
 				sensor.values.push({
 					date: new Date(),
@@ -88,8 +88,9 @@ exports.addNewSensorsValueIfMoreThan5Minutes = async (
 	}
 };
 
-createNewSensorIfNotExist = async (sensor, sensorDataModel) => {
+createNewSensorIfNotExist = async (model, sensorDataModel) => {
 	try {
+		const sensor = model.find({ name: sensorDataModel.name });
 		if (!sensor) {
 			const sensorData = new model({
 				name: sensorDataModel.name,
