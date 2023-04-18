@@ -102,7 +102,8 @@ createNewSensorIfNotExist = async (model, sensorDataModel) => {
 					},
 				],
 			});
-			await sensorData.save();
+			const saved = await sensorData.save();
+			console.log(saved)
 		}
 	} catch (err) {
 		console.error(err);
