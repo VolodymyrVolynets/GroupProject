@@ -77,11 +77,11 @@ exports.addNewSensorsValueIfMoreThan5Minutes = async (
 		const sensor = await model.findOne({ name: sensorDataModel.name });
 		createNewSensorIfNotExist(model, sensorDataModel);
 		if (await isSensorNeedsUpdate(sensor, 300)) {
-				sensor.values.push({
-					date: new Date(),
-					value: sensorDataModel.value,
-				});
-				const updatedSensor = await sensor.save();
+			sensor.values.push({
+				date: new Date(),
+				value: sensorDataModel.value,
+			});
+			const updatedSensor = await sensor.save();
 		}
 	} catch (err) {
 		console.error(err);
@@ -90,7 +90,7 @@ exports.addNewSensorsValueIfMoreThan5Minutes = async (
 
 createNewSensorIfNotExist = async (model, sensorDataModel) => {
 	try {
-		const sensor = model.find({ name: sensorDataModel.name });
+		const sensor = await model.findOne({ name: sensorDataModel.name });
 		if (!sensor) {
 			const sensorData = new model({
 				name: sensorDataModel.name,
@@ -103,13 +103,13 @@ createNewSensorIfNotExist = async (model, sensorDataModel) => {
 				],
 			});
 			const saved = await sensorData.save();
-			console.log(saved)
+			console.log(sensorData);
 		}
 	} catch (err) {
 		console.error(err);
 		return;
 	}
-}
+};
 
 isSensorNeedsUpdate = async (sensor, timeInSec) => {
 	if (!sensor) {
@@ -119,9 +119,9 @@ isSensorNeedsUpdate = async (sensor, timeInSec) => {
 	const now = Date.now();
 	const latestValue = sensor.values.slice(-1)[0];
 	if (latestValue && !(now - latestValue.date.getTime() < timeInSec * 1000)) {
-		return true
+		return true;
 	} else {
-		return false
+		return false;
 	}
 };
 
