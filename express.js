@@ -30,18 +30,31 @@ app.use(async (req, res, next) => {
 
 app.post('/getDataForSensor', async (req, res) => {
 	const sensorName = req.body.sensorName;
-
+ 
 	const data = await sensorsController.getDataForSensor(
 		req.username,
 		sensorName
 	);
-	res.send(data);
+	res.send(data.values);
 });
 
 app.post('/getAllSensorsLastData', async (req, res) => {
 	const data = await sensorsController.getAllSensorsLastData(req.username);
 
-	res.send(data);
+	const formatedData = []
+	for (let i = 0; i < data.length; i++) {
+		const sensor = data[i];
+		const sensorName = sensor.name;
+		const sensorType = sensor.type;
+		const sensorValue = sensor.values[0].value
+		formatedData.push({
+			"name": sensorName,
+			"type": sensorType,
+			"value": sensorValue
+		})
+	}
+
+	res.send(formatedData);
 });
 
 app.post('/removeSensorsData', async (req, res) => {

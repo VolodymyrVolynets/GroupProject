@@ -26,6 +26,22 @@ io.on('connection', (client, next) => {
 		return;
 	}
 
+	// Send all active sensors to the client
+	var allClientsInRoom = io.sockets.adapter.rooms.get(client.username);
+	if (allClientsInRoom) {
+		allClientsInRoom = Array.from(allClientsInRoom);
+		for (let i = 0; i < allClientsInRoom.length; i++) {
+			const socketId = allClientsInRoom[i];
+			const socket = io.sockets.sockets.get(socketId);
+			if (socket.activeSensors) {
+				client.emit('sensors_connected', socket.activeSensors);
+			}
+		}
+	}
+
+	client.activeSensors = [];
+
+
 	// Python clients send sensors values to the server and the server sends them to the other clients and saves them in the database every 5 minute
 	client.on('sensors_value', (data) => {
 		try {
@@ -39,8 +55,16 @@ io.on('connection', (client, next) => {
 
 			let sensorsArray = [];
 			for (let i = 0; i < data.length; i++) {
-				sensorsArray.push(new SensorDataModel(data[i]));
+				var sensor = new SensorDataModel(data[i])
+				sensorsArray.push(sensor);
+
+				// Add sensor name to client 
+				if (client.activeSensors.indexOf(sensor.name) === -1) {
+					client.activeSensors.push(sensor.name);
+					client.to(client.username).emit('sensors_connected', [sensor.name]);
+				}
 			}
+			
 
 			// echo to other clients
 			client.to(client.username).emit('sensors_value', sensorsArray);
@@ -110,6 +134,8 @@ io.on('connection', (client, next) => {
 	});
 
 	client.on('disconnect', () => {
+		// echo client disconnection
+		client.to(client.username).emit('sensors_disconnected', client.activeSensors);
 		client.disconnect();
 	});
 });

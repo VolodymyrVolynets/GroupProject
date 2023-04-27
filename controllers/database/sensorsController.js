@@ -128,7 +128,7 @@ isSensorNeedsUpdate = async (sensor, timeInSec) => {
 exports.getDataForSensor = async (username, sensorName) => {
 	try {
 		const model = await sensorsModel(username);
-		const data = await model.find({ name: sensorName });
+		const data = await model.findOne({ name: sensorName });
 		return data;
 	} catch (err) {
 		console.log(err);
