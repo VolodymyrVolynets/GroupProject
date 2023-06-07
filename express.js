@@ -8,6 +8,20 @@ dotenv.config();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.post('/register', async (req, res) => {
+	const username = req.body.username;
+	const password = req.body.password;
+
+	const result = await usersController.registerUser(username, password);
+
+	if (result) {
+		res.sendStatus(200);
+	} else {
+		res.sendStatus(500);
+	}
+})
+
 app.use(async (req, res, next) => {
 	const username = req.body.username;
 	const password = req.body.password;
@@ -27,19 +41,6 @@ app.use(async (req, res, next) => {
 	// res.status(200);
 	next();
 });
-
-app.post('/register', async (req, res) => {
-	const username = req.body.username;
-	const password = req.body.password;
-
-	const result = await usersController.registerUser(username, password);
-
-	if (result) {
-		res.sendStatus(200);
-	} else {
-		res.sendStatus(500);
-	}
-})
 
 app.post('/getDataForSensor', async (req, res) => {
 	const sensorName = req.body.sensorName;
