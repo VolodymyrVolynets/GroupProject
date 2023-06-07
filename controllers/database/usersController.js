@@ -23,14 +23,16 @@ exports.registerUser = async (username, password) => {
 		if (check != null) {
 			return false;
 		}
-		
-		var hashedPass = ""
-		bcrypt.hash(password, 10, function(err, hash) {
-			hashedPass = hash
-		});
+
+		const hashedPassword = await new Promise((resolve, reject) => {
+    		bcrypt.hash(password, 10, function(err, hash) {
+      		if (err) reject(err)
+      		resolve(hash)
+    	});
+  })
 		const result = await usersModel.create({
 			username: username,
-			password: hashedPass,
+			password: await hashedPassword,
 		});
 		return true;
 	} catch (err) {
@@ -50,13 +52,14 @@ exports.authenticateUser = async (username, password) => {
 				return false;
 			}
 		});
-		// console.log(result);
-		if (result == null) {
-			return false;
-		}
+		// // console.log(result);
+		// if (result == null) {
+		// 	return false;
+		// }
 		return true;
 	} catch (err) {
 		console.log(err);
+		return false;
 	}
 };
 
