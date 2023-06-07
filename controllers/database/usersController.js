@@ -17,6 +17,13 @@ exports.isUserExist = async (username) => {
 
 exports.registerUser = async (username, password) => {
 	try {
+		const check = await usersModel.findOne({
+			username: username
+		});
+		if (check != null) {
+			return false;
+		}
+		
 		var hashedPass = ""
 		bcrypt.hash(password, 10, function(err, hash) {
 			hashedPass = hash
@@ -34,15 +41,11 @@ exports.registerUser = async (username, password) => {
 
 exports.authenticateUser = async (username, password) => {
 	try {
-		var hashedPass = ""
-		bcrypt.hash(password, 10, function(err, hash) {
-			hashedPass = hash
-		});
 		const result = await usersModel.findOne({
-			username: username,
-			password: hashedPass,
+			username: username
 		});
-		bcrypt.compare(plaintextPassword, hash, function(err, result) {
+		const hash = result.password
+		bcrypt.compare(password, hash, function(err, result) {
 			if (!result) {
 				return false;
 			}
