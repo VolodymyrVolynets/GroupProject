@@ -43,13 +43,10 @@ exports.registerUser = async (username, password) => {
 
 exports.authenticateUser = async (username, password) => {
 	try {
-		const result = await usersModel.findOne({
+		const user = await usersModel.findOne({
 			username: username
 		});
-		const hash = result.password
-		console.log(hash)
-		console.log(result)
-		await bcrypt.compare(password, hash)
+		var result = await bcrypt.compare(password, user.password)
 		if (result) {
 			return true;
 		} else {
