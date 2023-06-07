@@ -49,13 +49,12 @@ exports.authenticateUser = async (username, password) => {
 		const hash = result.password
 		console.log(hash)
 		console.log(result)
-		bcrypt.compare(password, hash, function(err, result) {
-			if (result) {
-				return true;
-			} else {
-				return false
-			}
-		});
+		await bcrypt.compare(password, hash)
+		if (result) {
+			return true;
+		} else {
+			return false
+		}
 		// // console.log(result);
 		// if (result == null) {
 		// 	return false;
