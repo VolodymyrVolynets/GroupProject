@@ -48,15 +48,17 @@ exports.authenticateUser = async (username, password) => {
 		});
 		const hash = result.password
 		bcrypt.compare(password, hash, function(err, result) {
-			if (!result) {
-				return false;
+			if (result) {
+				return true;
+			} else {
+				return false
 			}
 		});
 		// // console.log(result);
 		// if (result == null) {
 		// 	return false;
 		// }
-		return true;
+		// return true;
 	} catch (err) {
 		console.log(err);
 		return false;

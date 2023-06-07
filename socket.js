@@ -4,7 +4,7 @@ const sensorsController = require('./controllers/database/sensorsController');
 const SensorDataModel = require('./Models/SensorDataModel');
 const ActuatorDataModel = require('./Models/ActuatorDataModel');
 
-io.use(require('./middlewares/authMiddleware').authenticateUser);
+// io.use(require('./middlewares/authMiddleware').authenticateUser);
 
 // Authentication middleware called only when a client connects
 io.use(require('./middlewares/authMiddleware').authenticateUser);
