@@ -49,7 +49,7 @@ app.post('/getDataForSensor', async (req, res) => {
 		req.username,
 		sensorName
 	);
-	print(data)
+	console.log(data)
 	res.send(data.values);
 });
 
