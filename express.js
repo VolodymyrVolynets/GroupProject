@@ -49,8 +49,11 @@ app.post('/getDataForSensor', async (req, res) => {
 		req.username,
 		sensorName
 	);
-	console.log(data)
-	res.send(data.values);
+	if (data) {
+		res.send(data.values);
+	} else {
+		res.sendStatus(500);
+	}
 });
 
 app.post('/getAllSensorsLastData', async (req, res) => {

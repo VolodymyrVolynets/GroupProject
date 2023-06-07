@@ -140,6 +140,7 @@ exports.getAllSensorsLastData = async (username) => {
 	try {
 		const model = await sensorsModel(username);
 		const sensors = await model.find({}, { values: { $slice: -1 } });
+		console.log(sensors);
 		return sensors;
 	} catch (err) {
 		console.error(err);
